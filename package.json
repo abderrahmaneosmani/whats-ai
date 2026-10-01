@@ -10,5 +10,8 @@
   },
   "peerDependencies": {
     "typescript": "^7"
+  },
+  "dependencies": {
+    "@openrouter/sdk": "^1.4.16"
   }
 }
