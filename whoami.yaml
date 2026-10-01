@@ -1,0 +1,7 @@
+services:
+ app:
+     image: traefik/whoami
+     labels:
+        - "traefik.http.routers.app.rule=Host(`banana`)"
+        - "traefik.http.routers.app.entrypoints=web"
+        - "traefik.http.routers.app.tls=true"
