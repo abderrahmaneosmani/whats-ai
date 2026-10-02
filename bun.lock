@@ -5,6 +5,7 @@
     "": {
       "name": "whatsapp-ai",
       "dependencies": {
+        "@google/generative-ai": "^0.24.1",
         "@openrouter/sdk": "^1.4.16",
       },
       "devDependencies": {
@@ -18,6 +19,8 @@
     },
   },
   "packages": {
+    "@google/generative-ai": ["@google/generative-ai@0.24.1", "", {}, "sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q=="],
+
     "@openrouter/sdk": ["@openrouter/sdk@1.4.16", "", { "dependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-Vg/gBrDoFE3J1XhjRI5d6B8AlFKL+oMeQeSOFj++jpQieqVOH8TH8OKJ+H9wYzEi1aQaU80i1FnhMhqJpVrbVg=="],
 
     "@types/body-parser": ["@types/body-parser@1.19.6", "", { "dependencies": { "@types/connect": "*", "@types/node": "*" } }, "sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g=="],

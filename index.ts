@@ -1,14 +1,10 @@
 
 import express from "express";
-import { OpenRouter } from "@openrouter/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
 
-const client = new OpenRouter({
-    apiKey: process.env.OPENROUTER_API_KEY || "", // Required. Your OpenRouter API key.
-    httpReferer: 'Whats-App', // Optional. Site URL for rankings on openrouter.ai.
-    appTitle: 'Whats-App', // Optional. Site title for rankings on openrouter.ai.
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 
 
@@ -59,7 +55,7 @@ app.post("/webhook", async (req, res) => {
     res.status(200).send("Webhook received!");
 
     try {
-        const model = process.env.OPENROUTER_MODEL || "nvidia/nemotron-3-ultra-550b-a55b:free";
+        
 
   const systemPrompt = `
 Tu es l'assistant commercial officiel de J'achète en Algérie.
@@ -671,59 +667,23 @@ Le client doit avoir l'impression de parler avec un vrai conseiller commercial q
 `;
 
 
-        const messages = [
-            {
-                role: "system" as const,
-                content: systemPrompt,
-            },
-            {
-                role: "user" as const,
-                content: contactName ? `${contactName}: ${body}` : body,
-            },
-        ];
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
+            systemInstruction: systemPrompt,
+        });
 
-        const modelsToTry = [
-            process.env.OPENROUTER_MODEL || "nvidia/nemotron-3.5-lightning:free",
-            "liquid/lfm-2.5-2.6b:free",
-            "thinkingmachines/inkling-small:free"
-        ];
+        const userMessage = contactName ? `${contactName}: ${body}` : body;
 
-        let completion;
-        let lastError;
-
-        for (const m of modelsToTry) {
-            console.log(`Sending to OpenRouter (${m})...`);
-            try {
-                completion = await client.chat.send({
-                    chatRequest: {
-                        model: m,
-                        messages,
-                    },
-                });
-                break; // If successful, break out of loop
-            } catch (err) {
-                console.warn(`Model ${m} failed:`, err.message || err);
-                lastError = err;
-            }
+        console.log("Sending to Google Gemini API...");
+        let reply = "";
+        try {
+            const result = await model.generateContent(userMessage);
+            reply = result.response.text();
+            console.log("Gemini response:\n", reply);
+        } catch (err) {
+            console.error("Gemini API Error:", err);
+            throw err;
         }
-
-        if (!completion) {
-            throw lastError || new Error("All fallback models failed");
-        }
-
-        if (completion instanceof ReadableStream) {
-            throw new Error("Expected a non-streaming response");
-        }
-
-        const rawReply = completion.choices?.[0]?.message?.content;
-        const reply =
-            typeof rawReply === "string"
-                ? rawReply
-                : Array.isArray(rawReply)
-                    ? rawReply.map((item: any) => item.text ?? "").join("")
-                    : "";
-
-        console.log("OpenRouter response:\n", reply);
 
         // Send reply to WhatsApp via OpenWA
         if (reply) {
@@ -760,7 +720,7 @@ Le client doit avoir l'impression de parler avec un vrai conseiller commercial q
             }
         }
     } catch (error) {
-        console.error("Error communicating with OpenRouter or OpenWA:", error);
+        console.error("Error communicating with Gemini or OpenWA:", error);
     }
 });
 

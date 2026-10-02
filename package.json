@@ -12,6 +12,7 @@
     "typescript": "^7"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@openrouter/sdk": "^1.4.16"
   }
 }
