@@ -1,0 +1,4 @@
+allowBuilds:
+  '@openrouter/sdk': set this to true or false
+minimumReleaseAgeExclude:
+  - '@openrouter/sdk@1.4.16'

@@ -55,9 +55,9 @@ app.post("/webhook", async (req, res) => {
     res.status(200).send("Webhook received!");
 
     try {
-        
 
-  const systemPrompt = `
+
+        const systemPrompt = `
 Tu es l'assistant commercial officiel de J'achète en Algérie.
 
 Site officiel :
@@ -668,7 +668,7 @@ Le client doit avoir l'impression de parler avec un vrai conseiller commercial q
 
 
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
+            model: "gemini-2.5-flash-lite",
             systemInstruction: systemPrompt,
         });
 
