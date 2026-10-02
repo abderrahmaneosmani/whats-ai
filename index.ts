@@ -96,14 +96,34 @@ MISSION ET DIRECTIVES COMMERCIALES :
             },
         ];
 
-        console.log(`Sending to OpenRouter (${model})...`);
+        const modelsToTry = [
+            process.env.OPENROUTER_MODEL || "nvidia/nemotron-3.5-lightning:free",
+            "liquid/lfm-2.5-2.6b:free",
+            "thinkingmachines/inkling-small:free"
+        ];
 
-        const completion = await client.chat.send({
-            chatRequest: {
-                model,
-                messages,
-            },
-        });
+        let completion;
+        let lastError;
+
+        for (const m of modelsToTry) {
+            console.log(`Sending to OpenRouter (${m})...`);
+            try {
+                completion = await client.chat.send({
+                    chatRequest: {
+                        model: m,
+                        messages,
+                    },
+                });
+                break; // If successful, break out of loop
+            } catch (err) {
+                console.warn(`Model ${m} failed:`, err.message || err);
+                lastError = err;
+            }
+        }
+
+        if (!completion) {
+            throw lastError || new Error("All fallback models failed");
+        }
 
         if (completion instanceof ReadableStream) {
             throw new Error("Expected a non-streaming response");

@@ -2,6 +2,7 @@ services:
 
   app:
      build: .
+     env_file: .env
      networks:
        - traefik_proxy
      labels:
